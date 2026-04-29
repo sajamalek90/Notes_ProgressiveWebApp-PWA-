@@ -1,4 +1,4 @@
-# ✦ Nota — Notes with Purpose
+# ✦ Nota APP
 
 > A beautiful, focused, offline-ready notes app built with pure HTML, CSS & JavaScript — no frameworks, no dependencies, no account required.
 
