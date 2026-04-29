@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#8B5CF6">
+    <meta name="description" content="A beautiful, focused notes app that works offline.">
+    <title>Nota APP</title>
+    <link rel="manifest" href="manifest/manifest.json">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,500;0,9..40,700;1,9..40,300&family=Lora:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet">
+    <link href="styles/index.css" rel="stylesheet">
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <span class="logo-mark">✦</span>
+          <span class="logo-text">Nota</span>
+        </div>
+        <button class="sidebar-close" id="sidebarClose" aria-label="Close menu">✕</button>
+      </div>
+
+      <div class="search-wrap">
+        <span class="search-icon">⌕</span>
+        <input type="text" id="searchInput" placeholder="Search notes…" class="search-input" autocomplete="off">
+      </div>
+
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-filter="all">
+          <span class="nav-icon">◈</span>
+          All Notes
+          <span class="nav-count" id="countAll">0</span>
+        </button>
+        <button class="nav-item" data-filter="pinned">
+          <span class="nav-icon">◆</span>
+          Pinned
+          <span class="nav-count" id="countPinned">0</span>
+        </button>
+        <button class="nav-item" data-filter="work">
+          <span class="nav-icon">◉</span>
+          Work
+          <span class="nav-count" id="countWork">0</span>
+        </button>
+        <button class="nav-item" data-filter="personal">
+          <span class="nav-icon">◎</span>
+          Personal
+          <span class="nav-count" id="countPersonal">0</span>
+        </button>
+        <button class="nav-item" data-filter="ideas">
+          <span class="nav-icon">◇</span>
+          Ideas
+          <span class="nav-count" id="countIdeas">0</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="stats-block">
+          <div class="stat-item">
+            <span class="stat-num" id="statNotes">0</span>
+            <span class="stat-label">Notes</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-item">
+            <span class="stat-num" id="statWords">0</span>
+            <span class="stat-label">Words</span>
+          </div>
+        </div>
+        <div id="installBadge" style="display:none">
+          <button class="install-btn" id="installBtn">⬇ Install App</button>
+        </div>
+        <p class="offline-badge" id="offlineBadge" style="display:none">● Offline</p>
+      </div>
+    </aside>
+
+    <!-- Overlay (mobile) -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Main -->
+    <main class="main">
+      <header class="topbar">
+        <button class="menu-btn" id="menuBtn" aria-label="Open menu">☰</button>
+        <h1 class="topbar-title" id="topbarTitle">All Notes</h1>
+        <div class="topbar-actions">
+          <button class="icon-action-btn" id="viewToggle" title="Toggle view">⊞</button>
+          <button class="icon-action-btn" id="sortBtn" title="Sort">⇅</button>
+        </div>
+      </header>
+
+      <section class="notes-section">
+        <div class="notes-grid" id="notesGrid"></div>
+        <div class="empty-state" id="emptyState" style="display:none">
+          <div class="empty-icon">✦</div>
+          <p class="empty-title">Nothing here yet</p>
+          <p class="empty-sub">Hit <strong>+</strong> to write your first note</p>
+        </div>
+      </section>
+    </main>
+
+    <!-- FAB -->
+    <button class="fab" id="fabBtn" aria-label="New note">
+      <span class="fab-icon">+</span>
+    </button>
+
+    <!-- Modal Editor -->
+    <div class="modal-backdrop" id="modalBackdrop">
+      <div class="modal" id="noteModal" role="dialog" aria-modal="true" aria-label="Note editor">
+
+        <div class="modal-header">
+          <div class="modal-top-row">
+            <select class="category-select" id="noteCategory">
+              <option value="work">Work</option>
+              <option value="personal">Personal</option>
+              <option value="ideas">Ideas</option>
+            </select>
+            <div class="modal-btn-group">
+              <button class="modal-icon-btn pin-btn" id="pinToggle" title="Pin note">◆</button>
+              <button class="modal-icon-btn danger-btn" id="deleteNoteBtn" title="Delete note" style="display:none">🗑</button>
+            </div>
+          </div>
+          <input type="text" id="noteTitle" class="note-title-input" placeholder="Note title…" maxlength="100">
+        </div>
+
+        <div class="modal-toolbar">
+          <button class="toolbar-btn" data-cmd="bold"                title="Bold"><b>B</b></button>
+          <button class="toolbar-btn" data-cmd="italic"              title="Italic"><i>I</i></button>
+          <button class="toolbar-btn" data-cmd="underline"           title="Underline"><u>U</u></button>
+          <div class="toolbar-sep"></div>
+          <button class="toolbar-btn" data-cmd="insertUnorderedList" title="Bullet list">≡</button>
+          <button class="toolbar-btn" data-cmd="insertOrderedList"   title="Numbered list">1.</button>
+          <div class="toolbar-sep"></div>
+          <button class="toolbar-btn" data-cmd="undo"  title="Undo">↩</button>
+          <button class="toolbar-btn" data-cmd="redo"  title="Redo">↪</button>
+          <div class="toolbar-sep"></div>
+          <button class="toolbar-btn focus-btn" id="focusModeBtn" title="Focus mode">◎</button>
+          <span class="word-count-live" id="wordCountLive">0 words</span>
+        </div>
+
+        <div class="note-editor" id="noteEditor"
+             contenteditable="true"
+             spellcheck="true"
+             placeholder="Start writing…"></div>
+
+        <div class="modal-footer">
+          <span class="note-timestamp" id="noteTimestamp">Just now</span>
+          <div class="footer-btns">
+            <button class="btn-cancel" id="cancelBtn">Cancel</button>
+            <button class="btn-save"   id="saveBtn">Save ✓</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="js/main.js"></script>
+    <script>
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker.register("sw.js");
+      }
+    </script>
+  </body>
+</html>
